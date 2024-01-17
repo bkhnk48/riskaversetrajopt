@@ -12,3 +12,5 @@ All dependencies can be installed by running
 ``
   pip install -r requirements.txt
 ``
+## Original Github:
+https://github.com/StanfordASL/RiskAverseTrajOpt
