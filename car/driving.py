@@ -393,7 +393,7 @@ class Model:
         #        min (1/2 z^T P z + q^T z)
         # where z = umat is the optimization variable.
         P, q = self.get_objective_coeffs_jax()
-        P, q = sp.csc_matrix(P.to_py()), q.to_py()
+        P, q = sp.csc_matrix(np.array(P)), np.array(q)
         return P, q
 
     def get_constraints_coeffs(self, us_mat, scp_iter):
@@ -405,7 +405,7 @@ class Model:
         As, ls, us = self.get_all_constraints_coeffs_all(us_mat)
 
         # Jax => numpy
-        A_con, l_con, u_con = A_con.to_py(), l_con.to_py(), u_con.to_py()
+        A_con, l_con, u_con = np.array(A_con), np.array(l_con), np.array(u_con)
         As, ls, us = np.copy(As), np.copy(ls), np.copy(us)
 
         if scp_iter < 1:
@@ -467,8 +467,11 @@ def L2_error_us(us_mat, us_mat_prev):
 if B_compute_solution_saa:
     print("---------------------------------------")
     print("[driving.py] >>> Computing SAA solution")
+    i = 0
     for idx_alpha, alpha in enumerate(alphas):
         for idx_repeat in range(num_repeats_saa):
+            i = i + 1
+            print("Time: ", i)
             model = Model(M, 'saa', alpha)
 
             # Initial compilation (JAX)
@@ -517,8 +520,8 @@ if B_compute_solution_saa:
                 '_repeat='+str(idx_repeat)+'.npy', 
                 'wb') as f:
                 xs = model.us_to_state_trajectories(us)
-                np.save(f, us.to_py())
-                np.save(f, xs.to_py())
+                np.save(f, np.array(us))
+                np.save(f, np.array(xs))
 
     with open('results/driving_computation_times.npy', 
         'wb') as f:
@@ -555,8 +558,8 @@ if B_compute_solution_base:
     with open('results/driving_baseline.npy', 
         'wb') as f:
         xs = model.us_to_state_trajectories(us)
-        np.save(f, us.to_py())
-        np.save(f, xs.to_py())
+        np.save(f, np.array(us))
+        np.save(f, np.array(xs))
     print("---------------------------------------")
 
 
