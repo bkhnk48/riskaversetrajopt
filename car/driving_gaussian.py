@@ -397,7 +397,7 @@ class Model:
         #        min (1/2 z^T P z + q^T z)
         # where z = umat is the optimization variable.
         P, q = self.get_objective_coeffs_jax()
-        P, q = sp.csc_matrix(P.to_py()), q.to_py()
+        P, q = sp.csc_matrix(np.array(P), np.array(q)
         return P, q
 
     def get_constraints_coeffs(self, us_mat, alphas_risk, scp_iter):
@@ -410,7 +410,7 @@ class Model:
             us_mat, alphas_risk)
 
         # Jax => numpy
-        A_con, l_con, u_con = A_con.to_py(), l_con.to_py(), u_con.to_py()
+        A_con, l_con, u_con = np.array(A_con), np.array(l_con), np.array(u_con)
         As, ls, us = np.copy(As), np.copy(ls), np.copy(us)
 
         if scp_iter < 1:
@@ -494,8 +494,8 @@ if B_compute_solution_gaussian:
         with open('results/driving_gaussian_alpha='+str(alpha)+'.npy', 
             'wb') as f:
             xs = model.us_to_state_trajectory(us)
-            np.save(f, us.to_py())
-            np.save(f, xs.to_py())
+            np.save(f, np.array(us))
+            np.save(f, np.array(xs))
     print("---------------------------------------")
 
 
